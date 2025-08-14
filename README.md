@@ -7,6 +7,7 @@ Conversational AI assistant for [PartSelect](https://www.partselect.com/) specia
 * **Focus**: Production-ready architecture demonstrating enterprise patterns  
 * **Evaluation Criteria**: This solution is assessed on interface design, agentic architecture, extensibility/scalability, and query accuracy. The system handles diverse inquiries from installation guidance ("How can I install part number PS11752778?") to compatibility checking ("Is this part compatible with my WDT780SAEM1 model?") and troubleshooting ("The ice maker on my Whirlpool fridge is not working. How can I fix it?").
 ##### Live Demo
+* [Loom Live Demo](https://www.loom.com/share/a75f9df6a5d241c2a083b5d26478b21a?sid=eff235db-4fe1-4362-b6ae-4ad9b4d587c9)
 
 ### Interface in Action
 ![PartSelect Chat Interface](docs/images/instalily_p1_A.gif)
