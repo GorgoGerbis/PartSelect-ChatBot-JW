@@ -1,0 +1,30 @@
+# Core FastAPI dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+httpx==0.25.2
+pydantic==2.5.0
+python-multipart==0.0.6
+
+# Database dependencies
+asyncpg==0.29.0
+psycopg2-binary==2.9.9
+
+# AI/ML dependencies
+openai==1.3.0
+numpy==1.24.3
+
+# Vector database dependencies
+faiss-cpu==1.7.4
+langchain-community==0.0.13
+langchain-openai==0.0.5
+
+# MCP framework
+fastmcp==0.4.0
+instructor==0.4.0
+
+# Data processing
+pandas==2.1.4
+# scikit-learn==1.3.2  # Skipping due to Windows compilation issues
+
+# Environment and utilities
+python-dotenv==1.0.0

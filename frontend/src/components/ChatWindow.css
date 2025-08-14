@@ -1,0 +1,700 @@
+/* PartSelect-inspired Chat Interface */
+@import "rsuite/dist/rsuite.css";
+
+.chat-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--partselect-white);
+  position: relative;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px 100px 24px; /* Added bottom padding to account for sticky input */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: var(--partselect-white);
+  height: 100%;
+}
+
+/* Chat Bubble Containers */
+.message-bubble {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+  margin: 8px 0;
+}
+
+.user-bubble {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.assistant-bubble {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+/* Message containers */
+.user-message-container,
+.assistant-message-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 4px 0;
+  /* Prevent flickering during updates */
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.user-message-container {
+  align-items: flex-end;
+}
+
+.assistant-message-container {
+  align-items: flex-start;
+}
+
+/* Chat Bubble Messages */
+.message {
+  white-space: pre-line;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.2; /* Reduced from 1.4 to 1.2 */
+  text-align: left;
+  word-wrap: break-word;
+  border-radius: 18px;
+  max-width: 100%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  /* Prevent layout shifts */
+  min-height: 20px;
+  contain: layout;
+}
+
+/* User message styling - Chat bubble */
+.user-message {
+  background-color: var(--partselect-teal);
+  color: var(--partselect-white);
+  border-bottom-right-radius: 4px;
+}
+
+/* Assistant message styling - Chat bubble */
+.assistant-message {
+  background-color: var(--partselect-light-gray);
+  border: 1px solid var(--partselect-medium-gray);
+  color: var(--partselect-black);
+  border-bottom-left-radius: 4px;
+}
+
+/* Message timestamps - Tighter spacing */
+.message-timestamp {
+  font-size: 11px;
+  color: var(--partselect-medium-gray);
+  margin-top: 4px; /* Reduced from 8px to 4px */
+  font-family: "Roboto", sans-serif;
+}
+
+/* Response time styling - subtle but visible for performance tracking */
+.response-time {
+  color: var(--partselect-teal);
+  font-weight: 500;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* Rich Content Styling - Zero spacing */
+.message-images {
+  margin: 0px 0 0px 0; /* Zero gap from bullets */
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* Minimal gap */
+}
+
+.message-image-container {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--partselect-medium-gray);
+  background-color: var(--partselect-light-gray);
+}
+
+.message-image {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.message-image:hover {
+  transform: scale(1.02);
+  cursor: pointer;
+}
+
+/* Link Previews - Horizontal stacking with zero spacing */
+.message-links {
+  margin: 0px 0 0px 0; /* Zero gap from bullets */
+  display: flex;
+  flex-direction: row; /* Changed to horizontal */
+  flex-wrap: wrap; /* Allow wrapping */
+  gap: 6px; /* Small gap between horizontal items */
+}
+
+.link-preview {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px; /* Smaller padding for horizontal layout */
+  background-color: var(--partselect-white);
+  border: 1px solid var(--partselect-teal);
+  border-radius: 6px; /* Smaller radius */
+  transition: all 0.2s ease;
+  cursor: pointer;
+  gap: 8px; /* Smaller gap */
+  flex: 0 0 auto; /* Don't grow/shrink */
+  min-width: 140px; /* Wider minimum for blog titles */
+  max-width: 280px; /* Wider maximum for blog titles */
+}
+
+/* Link preview thumbnail image - Smaller for horizontal */
+.link-preview-image {
+  flex-shrink: 0;
+  width: 40px; /* Smaller for horizontal layout */
+  height: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: var(--partselect-light-gray);
+}
+
+.preview-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.link-preview:hover .preview-thumbnail {
+  transform: scale(1.05);
+}
+
+.link-preview:hover {
+  background-color: var(--partselect-teal-light);
+  border-color: var(--partselect-teal-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(51, 119, 120, 0.15);
+}
+
+.link-preview-icon {
+  font-size: 20px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* Fallback icon when image fails to load */
+.fallback-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--partselect-teal-light);
+  border-radius: 4px;
+  font-size: 20px;
+}
+
+.link-preview-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.link-preview-url {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--partselect-teal);
+  text-decoration: none;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-preview-url:hover {
+  color: var(--partselect-teal-dark);
+  text-decoration: underline;
+}
+
+.link-preview-domain {
+  font-size: 12px;
+  color: var(--partselect-medium-gray);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Special styling for video links */
+.link-preview:has(.link-preview-url[href*="youtube"]) {
+  background: linear-gradient(135deg, #ff0000, #cc0000);
+  color: white;
+}
+
+.link-preview:has(.link-preview-url[href*="youtube"]) .link-preview-url {
+  color: white;
+}
+
+.link-preview:has(.link-preview-url[href*="youtube"]) .link-preview-domain {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Clean styling for PartSelect links - no more yellow boxes! */
+.link-preview.partselect-link {
+  background: var(--partselect-white);
+  border: 1px solid var(--partselect-teal);
+  border-left: 4px solid var(--partselect-teal); /* Nice accent instead of yellow */
+}
+
+.link-preview.partselect-link .link-preview-url {
+  color: var(--partselect-teal);
+  font-weight: 600;
+}
+
+.link-preview.partselect-link .link-preview-domain {
+  color: var(--partselect-medium-gray);
+}
+
+.link-preview.partselect-link:hover {
+  background: var(--partselect-teal-light);
+  border-color: var(--partselect-teal-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(51, 119, 120, 0.15);
+}
+
+/* Removed streamed data sections - now integrated into speech bubbles */
+
+.part-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--partselect-teal);
+  margin-bottom: 8px;
+}
+
+.part-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--partselect-gold-dark);
+  float: right;
+}
+
+/* Message content formatting - PartSelect theme */
+.message strong {
+  font-weight: 700; /* Bold per style guide */
+  color: var(--partselect-teal);
+}
+
+.message ul, .message ol {
+  margin: 0px 0; /* Zero margin */
+  padding-left: 18px;
+}
+
+.message li {
+  margin: 0px 0; /* Zero margin between bullets */
+  line-height: 1.0; /* Minimal line height */
+  padding: 0; /* No padding */
+}
+
+/* Even tighter for numbered lists */
+.message ol {
+  padding-left: 16px;
+  margin: 0px 0; /* Zero margins */
+}
+
+.message ol li {
+  margin: 0px 0; /* Zero margin between numbered items */
+  padding-left: 2px;
+  line-height: 1.0; /* Minimal line height for numbers */
+}
+
+/* Loading indicator - Chat bubble style */
+.loading-message {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--partselect-light-gray);
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  border: 1px solid var(--partselect-medium-gray);
+  color: var(--partselect-dark-gray);
+  font-style: italic;
+  font-size: 14px;
+  max-width: 70%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.loading-dots {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.loading-dots::after {
+  content: '...';
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Scrollbar styling - PartSelect theme */
+.messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: var(--partselect-medium-gray);
+  border-radius: 0; /* Square corners */
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: var(--partselect-teal);
+}
+
+/* Input area - PartSelect styling - Raised higher on screen */
+.input-area {
+  background: var(--partselect-white);
+  border-top: 1px solid var(--partselect-medium-gray);
+  padding: 20px 24px; /* Increased padding for more prominence */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15); /* Better shadow for elevation */
+  position: sticky; /* Make it stick to bottom */
+  bottom: 0;
+  z-index: 10; /* Ensure it stays above other content */
+}
+
+.input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.input-area input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--partselect-medium-gray);
+  border-radius: 24px;
+  font-size: 14px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  background-color: var(--partselect-light-gray);
+  color: var(--partselect-black);
+  outline: none;
+  transition: border-color 0.2s ease;
+  resize: none;
+}
+
+.input-area input:focus {
+  border-color: var(--partselect-teal);
+  /* No box shadow per style guide */
+}
+
+.input-area input::placeholder {
+  color: var(--partselect-dark-gray);
+  opacity: 1;
+}
+
+/* Send button - Modern chat style */
+.send-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--partselect-gold), var(--partselect-gold-dark));
+  color: var(--partselect-black);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Roboto", sans-serif;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(243, 192, 76, 0.3);
+  min-width: 70px;
+}
+
+.send-button:hover {
+  background: var(--partselect-gold-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(243, 192, 76, 0.4);
+}
+
+.send-button:active {
+  transform: translateY(0);
+}
+
+.send-button:disabled {
+  background: var(--partselect-medium-gray);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Secondary gold button for important actions */
+.gold-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0;
+  background-color: var(--partselect-gold);
+  color: var(--partselect-black);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: none;
+  box-shadow: none;
+  min-width: 80px;
+  height: 35px;
+  margin-left: 8px;
+}
+
+.gold-button:hover {
+  background-color: var(--partselect-gold-dark);
+}
+
+/* Professional message cards */
+.message-card {
+  background: var(--partselect-white);
+  border: 1px solid var(--partselect-teal);
+  padding: 20px;
+  margin: 8px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.message-card-header {
+  background: var(--partselect-gold);
+  color: var(--partselect-black);
+  padding: 12px 20px;
+  margin: -20px -20px 16px -20px;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .messages-container {
+    padding: 16px 16px 120px 16px; /* Increased bottom padding for sticky input */
+    margin-top: 60px;
+  }
+  
+  .welcome-section {
+    padding: 20px;
+  }
+  
+  .welcome-title {
+    font-size: 20px;
+  }
+  
+  .user-message-container,
+  .assistant-message-container {
+    max-width: 95%;
+  }
+  
+  /* Mobile rich content */
+  .message-image {
+    max-width: 250px;
+  }
+  
+  .link-preview {
+    padding: 6px 8px; /* Smaller on mobile */
+    gap: 6px;
+    min-width: 100px; /* Smaller min width on mobile */
+    max-width: 150px;
+  }
+  
+  .link-preview-image {
+    width: 32px; /* Smaller on mobile */
+    height: 32px;
+  }
+  
+  /* Stack vertically on very small screens */
+  @media (max-width: 480px) {
+    .message-links {
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .link-preview {
+      max-width: none;
+    }
+  }
+  
+  .link-preview-icon {
+    font-size: 18px;
+  }
+  
+  .link-preview-url {
+    font-size: 13px;
+  }
+  
+  .link-preview-domain {
+    font-size: 11px;
+  }
+  
+  .part-info {
+    padding: 12px;
+  }
+  
+  .part-title {
+    font-size: 14px;
+  }
+  
+  .part-price {
+    font-size: 16px;
+  }
+  
+  .message {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .input-area {
+    padding: 16px; /* Consistent padding for mobile */
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow on mobile */
+  }
+  
+  .input-area input {
+    padding: 12px 16px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .send-button {
+    padding: 12px 16px;
+    min-width: 70px;
+  }
+  
+  .welcome-section {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .message,
+  .send-button {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Error message styling - PartSelect theme */
+.error-message {
+  background-color: var(--partselect-white) !important;
+  border: 1px solid var(--partselect-danger) !important;
+  color: var(--partselect-danger) !important;
+  border-radius: 0 !important; /* Square corners */
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .message {
+    border: 2px solid currentColor;
+  }
+  
+  .input-area input {
+    border-width: 3px;
+  }
+}
+
+/* Rich Content Styling for Parts, Repairs, and Articles */
+
+/* Image Styling for Parts */
+.message img {
+  max-width: 200px;
+  max-height: 150px;
+  border-radius: 8px;
+  margin: 8px 0;
+  border: 1px solid #e1e4e8;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.message img:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* Link Styling */
+.message a {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: border-bottom-color 0.2s ease;
+}
+
+.message a:hover {
+  border-bottom-color: #0066cc;
+}
+
+/* Section Headers in Messages - Zero spacing */
+.message h2 {
+  color: #2c3e50;
+  font-size: 1.1em;
+  margin: 0px 0 0px 0; /* Zero margin */
+  padding-bottom: 0px; /* No jarring border lines */
+}
+
+.message h3 {
+  color: #34495e;
+  font-size: 1.05em;
+  margin: 0px 0 0px 0; /* Zero margin */
+}
+
+/* Remove jarring section lines */
+.message hr {
+  display: none; /* Hide all horizontal rules - they're jarring */
+  margin: 2px 0; /* Almost no margin */
+}
+
+/* Zero paragraph spacing */
+.message p {
+  margin: 0px 0; /* Zero margin */
+  line-height: 1.0; /* Ultra minimal line height */
+}
+
+/* Reduce spacing around strong/bold text */
+.message strong {
+  font-weight: 700;
+  color: var(--partselect-teal);
+  line-height: 1.0; /* Ultra minimal line height */
+}
+
+/* Tighter spacing for line breaks */
+.message br + br {
+  display: none; /* Remove double line breaks */
+}
+
+/* Ultra-compact text formatting */
+.message div {
+  line-height: 1.0; /* Minimal line height for all divs */
+}
+
+.message span {
+  line-height: 1.0; /* Minimal line height for all spans */
+}
+
+/* Remove default margins from all text elements */
+.message * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
